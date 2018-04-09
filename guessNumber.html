@@ -27,6 +27,8 @@
 
     <p>We have selected a random number between 1 and 100. See if you can guess it in 10 turns or fewer. We'll tell you if your guess was too high or too low.</p>
 
+    <p class="computerGuessField"></p>
+
     <div class="form">
       <label for="guessField">Enter a guess: </label><input type="text" id="guessField" class="guessField">
       <input type="submit" value="Submit guess" class="guessSubmit">
@@ -40,15 +42,24 @@
 
     <script>
       // Your JavaScript goes here
-      var randomNumber = Math.floor(Math.random() * 100) + 1;
+      var maxInt = 100;
+      var randomNumber = getRandomInt(maxInt);
+      var computerGuessCount = 0;
+      var computerGuess = 0;
+      var relativeMax = maxInt;
+      var relativeMin = 0;
       var guesses = document.querySelector('.guesses');
       var lastResult = document.querySelector('.lastResult');
       var lowOrHi = document.querySelector('.lowOrHi');
       var guessSubmit = document.querySelector('.guessSubmit');
       var guessField = document.querySelector('.guessField');
+      var computerGuessField = document.querySelector('.computerGuessField');
       var guessCount = 1;
       var resetButton;
       guessField.focus();
+      computerGuesser();
+      computerGuessField.textContent = 'I was able to guess it in '
+        +computerGuessCount+' guesses!!!';
       function checkGuess() {
         var userGuess = Number(guessField.value);
         if(guessCount === 1) {
@@ -78,6 +89,22 @@
         guessField.focus();
       }
       guessSubmit.addEventListener('click', checkGuess);
+      function computerGuesser(){
+        while (computerGuess!=randomNumber){
+          if(computerGuess < randomNumber){
+            relativeMin = computerGuess;
+            computerGuess += Math.floor(relativeMax-relativeMin)/2;
+          }
+          else if(computerGuess > randomNumber){
+            relativeMax = computerGuess;
+            computerGuess += (-1)*Math.floor(relativeMax-relativeMin)/2;
+          }
+          computerGuessCount++;
+        }
+      }
+      function getRandomInt(max){
+        return Math.floor(Math.random() * max)+1;
+      }
       function setGameOver() {
         guessField.disabled = true;
         guessSubmit.disabled = true;
